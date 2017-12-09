@@ -1,0 +1,18 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+</head>
+<body>
+    <h1>출석페이지 입니다.</h1>
+    <form action="/attend/success/" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="st_id">student id : </label>
+        <input id="st_id" name="student_id" type="text">
+        <input type="hidden" name="class_pk" value="{{class_pk}}">
+        <input type="submit" value="submit">
+    </form>
+</body>
+</html>

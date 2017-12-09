@@ -34,13 +34,15 @@ class RegisterModel(models.Model):
     # 수업
     class_model = models.ForeignKey(ClassModel, on_delete=models.CASCADE, verbose_name='과목')
 
+    # hash 값, 인증을 위해 필요
+    class_hash = models.CharField(max_length=10, verbose_name='hash', blank=True, null=True)
+
     # 분반
     division = models.IntegerField(default = 1, blank=False, null=False, verbose_name='분반')
 
     # 학생 등록
     student = models.ManyToManyField(StudentModel)
 
-    # 요일1
     # validator 필요함
     day = models.CharField( max_length=20, default='mon', verbose_name="요일 및 시간")
 
