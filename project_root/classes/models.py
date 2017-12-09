@@ -1,10 +1,16 @@
+import re
+
 from django.db import models
 from django.conf import settings
+from django.forms import ValidationError
+from django.core.urlresolvers import reverse
+
 from student.models import StudentModel
 
-import datetime
+def lnglat_validator(value):
+    if not re.match(r'^([+-]?\d+\.?\d*),([+-]?\d+\.?\d*)$', value):
+        raise ValidationError('Invalid LngLat Type')
 
-# Create your models here.
 
 class ClassModel(models.Model):
 
@@ -43,8 +49,17 @@ class RegisterModel(models.Model):
     # 학생 등록
     student = models.ManyToManyField(StudentModel)
 
+    #room
+    class_room = models.CharField(max_length=10, default='000000')
+
+    #강의실 경도 위도 입력
+    lnglat = models.CharField(max_length=50, blank=True, validators=[lnglat_validator], help_text='경도/위도 포맷으로 입력')
+
     # validator 필요함
     day = models.CharField( max_length=20, default='mon', verbose_name="요일 및 시간")
+
+    def get_absolute_url(self):
+        return reverse('class:class_detail', args=[self.id])
 
     def __str__(self):
         return self.class_model.title + "(" + self.class_model.class_code + '-' + str(self.division) + ')'

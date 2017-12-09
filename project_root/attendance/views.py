@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.conf import settings
+from django.utils import timezone
 
 # import DBs
 from student.models import StudentModel
 from classes.models import RegisterModel
 from attendance.models import DateModel
 
-# Create your views here.
+from project.addition import lonlatCalculator
 
 #attend/{{class_id}}/load/ url redirecting
 def detour(request, class_hash):
@@ -50,9 +52,22 @@ def success(request):
         if (student_info in class_info.student.all()):
             print('Register Conformed')
 
-            # --------------- 이 부분에 출석 Data 형성하는 코드를 넣으면 된다.
-            new_attend = DateModel()
-            # ------------------------------------------------------------
+            # lonlat 생략합니다.
+            # print(request.POST['lat'], request.POST['lon'])
+            # input_lon = float(request.POST['lon']) 
+            # input_lat = float(request.POST['lat'])
+            # class_lat, class_lon  = map(lambda x: float(x), class_info.lnglat.split(','))
+            # print('사용자의 위도(%lf) 경도(%lf) 값 호출 성공' % (input_lat, input_lon))
+            # print('[%s]의 위도(%lf) 경도(%lf) 값 호출 성공' % (class_info, class_lat, class_lon))
+
+            # distance = lonlatCalculator(class_lat, class_lon, input_lat, input_lon)
+            # print('사용자와 강의실의 거리 ---------- [%f]' % distance)
+
+            current_date =  timezone.localtime().strftime('%Y-%m-%d')
+            current_time = timezone.localtime().strftime('%H:%M:%S')
+            new_attend = DateModel(today=current_date, attend_time=current_time, register=class_info, status='l')
+            new_attend.save()
+            new_attend.student.add(student_info.pk)
 
             return render(request, 'attendance/success.html', {"student" : student_info})
         else:
