@@ -28,4 +28,3 @@ def class_detail(request, id):
 
     else:
         return render(request, 'error.html', {'err':"unauthorized user"})
-        
