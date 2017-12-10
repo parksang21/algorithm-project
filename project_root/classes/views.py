@@ -2,6 +2,10 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.contrib.auth.models import User
+from django.http import HttpResponse
+
+import json
+import re
 
 from classes.models import RegisterModel
 from attendance.models import DateModel
@@ -44,7 +48,31 @@ def date_detail(request, c_id, id):
     print("%s ----------- loaded" % date)
 
     student_list = date.studentinstance_set.all()
+    
 
     context = {'date':date, 'students':student_list}
     template = 'classes/date_detail.html'
     return render(request, template, context)
+
+
+def refresh(request):
+    id = request.GET.get('pk', None)
+    st_list = request.GET.get('st_list', None)
+
+    p = re.compile(r'\d{10}')
+    st_list = p.findall(st_list)
+
+    date = get_object_or_404(DateModel, id=id)
+    student_list = date.studentinstance_set.all()
+
+    new_students_name = []
+    new_students_time = []
+    
+    for student in student_list:
+        print(student)
+        if str(student.student.student_id) not in st_list:
+            new_students_name.append(str(student.student.name) + '-' + str(student.student.student_id))
+            new_students_time.append(str(student.attend_time))
+
+    context = {'student_name':new_students_name, 'attend_time': new_students_time}
+    return HttpResponse(json.dumps(context), content_type="application/json")

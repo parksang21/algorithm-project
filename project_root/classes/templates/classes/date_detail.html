@@ -4,30 +4,95 @@
 
 {% endblock title %}
 
+{% block style %}
+.btn.btn-primary{
+    width:20%;
+    border-radius:0px;
+    background-color:#00897B;
+    border-color: #00897B;
+}
+
+.btn.btn-primary:hover{
+    border-color:#004D40;
+    background-color:#00695C;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.form-control{
+    border-radius: 0px;
+}
+{% endblock style %}
+
 {% block body %}
-<div class="jumbotron">
+<div class="jumbotron shad" style="background-color:#4DB6AC;">
     <div class="container text-center">
         <h1>{{date.register}}</h1>
         <h3>{{date.today}}</h3>
     </div>
 </div>
 
+<div class="container" style="color:#006064;">
+    <h3>Today's Students List</h3>
+    <hr>
+    <h5>Current time : <span id="demo"></span></h5>
+</div>
+
+<br><br>
 <div class="container">
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Attend Time</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for student in students %}
-                <tr>
-                    <td>{{student.student}}</td>
-                    <td>{{student.attend_time}}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    <form class="form-inline" method="POST">
+        {% csrf_token %}
+        <label for="time-input" style="width:40%;">Attend Time</label>
+        <input type="time" id="time-input" name="standtime" class="form-control" style="width:40%">
+        <input type="submit" class="btn btn-primary" value="submit">
+    </form>
+</div>
+<br>
+<div class="container">
+    <table id="student" class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Attend Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td>{{student.student}}</td>
+                <td>{{student.attend_time|time:"H:i:s"}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock body %}
+
+{% block script %}
+<script>    
+var pk = '{{date.id}}';
+var list = '';
+
+'{% for student in students %}'
+list += '{{student.student}}'
+'{% endfor %}'
+
+setInterval(()=>{
+    $.get(
+        "{% url 'class:refresh' %}",
+        {'pk': pk, 'st_list':list},
+        (result)=>{
+            if (result){
+                for(var i = 0; i < result.student_name.length; i++){
+                    $('#student tr:last').after('<tr><td>'+result.student_name[i]+'</td><td>'+result.attend_time[i]+'</td></tr>');
+                    console.log('aaaa' + result.student_name[i]);
+                    list += result.student_name[i];
+                }
+            }
+        });
+    }, 10000000000000000);
+
+setInterval(()=>{
+    document.getElementById("demo").innerHTML = Date();
+})
+</script>
+        
+{% endblock script %}
