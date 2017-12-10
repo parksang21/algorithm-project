@@ -1,30 +1,26 @@
-{% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-</head>
-<body>
-    <h1>출석페이지 입니다.</h1>
-    <form  action="/attend/success/" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <label for="st_id">student id : </label>
-        <input id="st_id" name="student_id" type="text">
-        <input type="hidden" name="class_pk" value="{{class_pk}}">
-        <input type="text" id="lon" name="lon" value="">
-        <input type="text" id="lat" name="lat" value="">        
-        <input type="submit" value="submit">
-    </form>
-    <script>
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(success);
-        }
-        
-        function success(position) {
-            document.getElementById("lat").value = position.coords.latitude;
-            document.getElementById("lon").value = position.coords.longitude;
-        }
-    </script>
-</body>
-</html>
+{% extends "layout.html" %}
+{% block title %}
+attendance
+{% endblock title %}
+{% block body %}
+<h1>출석페이지 입니다.</h1>
+<form  action="/attend/success/" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label for="st_id">student id : </label>
+    <input id="st_id" name="student_id" type="text">
+    <input type="hidden" name="class_pk" value="{{class_pk}}">
+    <input type="hidden" id="lon" name="lon" value="">
+    <input type="hidden" id="lat" name="lat" value="">        
+    <input type="submit" value="submit">
+</form>
+<script>
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(success);
+    }
+    
+    function success(position) {
+        document.getElementById("lat").value = position.coords.latitude;
+        document.getElementById("lon").value = position.coords.longitude;
+    }
+</script>
+{% endblock body %}

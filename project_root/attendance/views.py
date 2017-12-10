@@ -53,7 +53,7 @@ def success(request):
             print('Register Conformed')
             
             print(request.POST['lat'], request.POST['lon'])
-            input_lon = float(request.POST['lon']) 
+            input_lon = float(request.POST['lon'])
             input_lat = float(request.POST['lat'])
             class_lat, class_lon  = map(lambda x: float(x), class_info.lnglat.split(','))
             print('사용자의 위도(%lf) 경도(%lf) 값 호출 성공' % (input_lat, input_lon))
@@ -65,10 +65,14 @@ def success(request):
             current_date =  timezone.localtime().strftime('%Y-%m-%d')
             current_time = timezone.localtime().strftime('%H:%M:%S')
 
-            new_student = StudentInstance()
+            try:
+                new_date = get_object_or_404(DateModel, today=current_date, register=class_pk)
+            except:
+                new_date = DateModel(register=class_info, today=current_date, start_time=current_time)          
+                new_date.save()
 
-            new_attend.save()
-            new_attend.student.add(student_info.pk)
+            new_student = StudentInstance(status='l', student=student_info, date=new_date, attend_time=current_time)
+            new_student.save()
 
             return render(request, 'attendance/success.html', {"student" : student_info})
         else:

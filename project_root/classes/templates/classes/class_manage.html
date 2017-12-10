@@ -1,5 +1,12 @@
-<h1>{{user}}</h1>
+{% extends "layut.html" %}
 
+{% block title %}
+class Manage
+{% endblock title %}
+
+{% block body %}
+<h1>{{user}}</h1>
 {% for class in class_list %}
 <a href="{{class.get_absolute_url}}"><h2>{{class.class_model}}-{{class.division}}</h2></a>
 {% endfor %}
+{% endblock body %}

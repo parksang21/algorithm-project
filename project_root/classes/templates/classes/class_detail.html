@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block title %}
+class detail
+{% endblock title %}
+
+{% block body %}
+<div class="jumbotron">
+    <div class="container">
+        <h1>{{class.class_model}}</h1>
+        <p>강의실 : {{class.class_room}}</p>
+        <p>오늘의 날짜 : {{currenttime}}</p>
+    </div>
+</div>
+
+<div class="container">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for date in date_model %}
+            
+            <tr>
+                <td><a href="{% url "class:date_detail" class.id date.id %}">{{date.today}}</a></td>
+                <td>{{date.start_time}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+            
+</div>
+{% endblock body %}

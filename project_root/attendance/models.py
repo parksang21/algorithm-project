@@ -14,3 +14,6 @@ class DateModel(models.Model):
 
     # 과목은 MTO으로 연결
     register = models.ForeignKey(RegisterModel, on_delete=models.CASCADE, verbose_name='과목')
+
+    def __str__(self):
+        return str(self.register) + ' ' + str(self.today)  
